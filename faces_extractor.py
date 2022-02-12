@@ -1,11 +1,12 @@
 import cv2
 
-def extract_faces(frame, detector, min_confidence = 0.9, marker = True, padding = 10):
+def extract_faces(frame, detector, output_size, min_confidence = 0.9, marker = True, padding = 10):
     """
     Returns extracted faces array.
 
     :param frame: array
     :param detector: MTCNN()
+    :param output_size: int tuple
     :param min_confidence: float (defaults 0.9)
     :param marker: boolean (defaults True)
     :param padding: int (defaults 10)
@@ -26,7 +27,8 @@ def extract_faces(frame, detector, min_confidence = 0.9, marker = True, padding 
             cropped_face = frame[y1:y2, x1:x2]
 
             if len(cropped_face) > 0: 
-                extracted_faces.append(cropped_face)
+                resized_face = cv2.resize(cropped_face, output_size)
+                extracted_faces.append(resized_face)
                 if marker: cv2.rectangle(frame, (x1-1,y1-1), (x2,y2), (100, 255,100), 1)
 
     return extracted_faces

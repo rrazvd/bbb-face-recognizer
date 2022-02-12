@@ -25,14 +25,13 @@ cv2.startWindowThread()
 while True:
     for cam in AVAILABLE_CAMS:
         frame = get_cam_frame(cam)
-        faces = extract_faces(frame, detector)
+        faces = extract_faces(frame, detector, IMG_SIZE)
 
         for face in faces:
-            resized_img = cv2.resize(face, IMG_SIZE)
-            cv2.imwrite(DIR_PATH + "/face"+str(count)+".jpg", resized_img)
+            cv2.imwrite(DIR_PATH + "/face"+str(count)+".jpg", face)
             count += 1
 
-        cv2.imshow('image',frame)
+        cv2.imshow('Cam ' + cam,frame)
         cv2.waitKey(2000)
 
         print('\n' + str(len(faces)) + ' faces were found on Cam ' + cam)
