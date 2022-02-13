@@ -13,23 +13,18 @@ LABELS = ['arthur', 'barbara', 'brunna', 'douglas', 'eliezer', 'eslo', 'gustavo'
 SLEEPING_TIME = 10
 IMG_SIZE = (160, 160)
 
-DIR_PATH = 'dataset2/train/'
-try:
-    os.makedirs(DIR_PATH)
-except FileExistsError:
-    pass
-finally:
-    DIR_COUNT = len(os.listdir(DIR_PATH))
+DIR_PATH = 'dataset2/train/' # can be specified 'train' or 'val'
+if not os.path.exists(DIR_PATH): os.makedirs(DIR_PATH)
 
 def choose_label():
     """
     Returns label according by user input
     """
     count = 0;
-    
+
     print('\nWhose face is this?\n')
     for label in LABELS:
-        print(str(count) + ' - '+ label + '\n')
+        print(str(count) + ' - ' + label + '\n')
         count += 1
 
     selected = input('Select a label by number or just leave blank to skip: ')
@@ -47,7 +42,7 @@ def close_windows():
     for i in range (1,5):
         cv2.waitKey(1)
 
-labelled_amount = 0
+labeled_amount = 0
 detector = MTCNN(min_face_size = 30)
 cv2.startWindowThread()
 
@@ -55,13 +50,17 @@ while True:
 
     for cam in AVAILABLE_CAMS:
 
+        # get cam frame by cam code and show it
         frame = get_cam_frame(cam)
         cv2.imshow('Cam ' + cam,frame)
         cv2.waitKey(1000)
 
+        # get faces on frame
         faces = get_faces_from_frame(frame, detector, IMG_SIZE)
 
         for face in faces:
+
+            # show the recognized face
             cv2.imshow('label this face', face)
             cv2.waitKey(100)
 
@@ -78,14 +77,14 @@ while True:
                 cv2.imwrite(path + '/' + filename, face)
 
                 print('\nA face was labelled: ' + filename)
-                labelled_amount += 1
+                labeled_amount += 1
             except:
                 print('\nThe face was skipped')
             finally:
                 close_windows()
 
         close_windows()    
-        print('\n' + str(len(faces)) + ' faces were found on Cam ' + cam + ', and ' + str(labelled_amount) + ' faces were labeled in this session')
+        print('\n' + str(len(faces)) + ' faces were found on Cam ' + cam + ', and ' + str(labeled_amount) + ' faces were labeled in this session')
 
     print('\nSleeping for ' + str(SLEEPING_TIME) + ' seconds...\n')
     
