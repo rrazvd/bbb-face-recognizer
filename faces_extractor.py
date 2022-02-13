@@ -1,14 +1,15 @@
 import cv2
+import numpy as np
 
-def extract_faces(frame, detector, output_size, min_confidence = 0.9, marker = True, padding = 10):
+def get_faces_from_frame(frame, detector, output_size, min_confidence = 0.9, marker = False, padding = 10):
     """
-    Returns extracted faces array.
+    Returns extracted faces array from frame.
 
     :param frame: array
     :param detector: MTCNN()
     :param output_size: int tuple
     :param min_confidence: float (defaults 0.9)
-    :param marker: boolean (defaults True)
+    :param marker: boolean (defaults False)
     :param padding: int (defaults 10)
 
     :return extracted faces arrays

@@ -1,4 +1,6 @@
 dataset/
+dataset2/
 labelled_dataset
+labelled_dataset2
 .DS_Store
 __pycache__/
