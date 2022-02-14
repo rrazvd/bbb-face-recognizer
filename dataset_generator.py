@@ -3,10 +3,9 @@ from mtcnn import MTCNN
 import os
 import time
 from tqdm import tqdm
-from frame_scrapper import get_cam_frame, get_available_cams
+from cam_scrapper import get_cam_frame, get_available_cams
 from face_extractor import get_faces_from_frame
 
-AVAILABLE_CAMS = get_available_cams()
 LABELS = ['arthur', 'barbara', 'brunna', 'douglas', 'eliezer', 'eslo', 'gustavo', 'jade', 
         'jessi', 'lais', 'lari', 'linna', 'lucas', 'maria', 'naty', 'paulo', 'scooby', 'tiago', 'vini']
 
@@ -48,7 +47,7 @@ cv2.startWindowThread()
 
 while True:
 
-    for cam in AVAILABLE_CAMS:
+    for cam in get_available_cams():
 
         # get cam frame by cam code and show it
         frame = get_cam_frame(cam)

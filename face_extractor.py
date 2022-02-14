@@ -5,7 +5,7 @@ def get_faces_from_frame(frame, detector, output_size, min_confidence = 0.9, mar
     """
     Returns extracted faces array from frame.
 
-    :param frame: array
+    :param frame: frame pixel array
     :param detector: MTCNN()
     :param output_size: int tuple
     :param min_confidence: float (defaults 0.9)

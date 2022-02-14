@@ -6,7 +6,7 @@ def get_cam_frame(cam_code):
     """
     Returns frame array according by cam code.
 
-    :param cam_code: string
+    :param cam_code: cam code string
 
     :return frame array
     """
