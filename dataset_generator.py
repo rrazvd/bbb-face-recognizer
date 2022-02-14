@@ -3,10 +3,10 @@ from mtcnn import MTCNN
 import os
 import time
 from tqdm import tqdm
-from frame_scrapping import get_cam_frame
-from faces_extractor import get_faces_from_frame
+from frame_scrapper import get_cam_frame, get_available_cams
+from face_extractor import get_faces_from_frame
 
-AVAILABLE_CAMS = ['01', '03', '04', '06', '07', '08', '10', '11']
+AVAILABLE_CAMS = get_available_cams()
 LABELS = ['arthur', 'barbara', 'brunna', 'douglas', 'eliezer', 'eslo', 'gustavo', 'jade', 
         'jessi', 'lais', 'lari', 'linna', 'lucas', 'maria', 'naty', 'paulo', 'scooby', 'tiago', 'vini']
 
@@ -76,7 +76,7 @@ while True:
                 filename = label + str(len(os.listdir(path)) + 1) + '.jpg'
                 cv2.imwrite(path + '/' + filename, face)
 
-                print('\nA face was labelled: ' + filename)
+                print('\nA face was labeled: ' + filename)
                 labeled_amount += 1
             except:
                 print('\nThe face was skipped')
