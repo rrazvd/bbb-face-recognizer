@@ -5,7 +5,7 @@ from tqdm import tqdm
 from cam_scrapper import get_available_cams, get_cam_frame
 from face_extractor import get_faces_from_frame
 from keras_facenet import FaceNet
-from matplotlib import pyplot
+from utils import close_windows, draw_label
 import numpy as np
 import cv2
 
@@ -17,19 +17,6 @@ embedder = FaceNet(key='20170511-185253')
 
 model = load('model.joblib')
 label_encoder = load('label_encoder.joblib')
-
-def plot_predicted_face(face, predicted, probability_arr):
-    """
-    Plot predicted face with label and probability.
-
-    :param face: face pixel array
-    :param predicted: predicted label string
-    :param probability_arr: probability array
-    """
-    pyplot.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
-    title = '%s (%.2f)' % (predicted[0], np.amax(probability_arr[0]) * 100)  
-    pyplot.title(title)
-    pyplot.show()
 
 def predict(face):
     """
@@ -52,6 +39,8 @@ def predict(face):
 
     return label, y_prob
 
+cv2.startWindowThread()
+
 while True:
 
     for cam in get_available_cams():
@@ -60,16 +49,20 @@ while True:
         frame = get_cam_frame(cam)
 
         # get faces on frame
-        faces = get_faces_from_frame(frame, detector, IMG_SIZE)
+        faces = get_faces_from_frame(frame, detector, IMG_SIZE, marker=True)
 
         print(str(len(faces)) + ' faces were found on Cam ' + cam + '...')
 
         # predict all faces
         for face in faces:
-            label, y_prob = predict(face)
-            plot_predicted_face(face, label, y_prob)
+            label, y_prob = predict(face['pixels'])
+            probability = np.amax(y_prob[0]) * 100
+            draw_label(frame, face['coordinates'], label, probability)
         
-        time.sleep(1)
+        cv2.imshow('Cam ' + cam,frame)
+        cv2.waitKey(2000)
+
+    close_windows()
 
     print('\nSleeping for ' + str(SLEEPING_TIME) + ' seconds...\n')
     for i in tqdm(range(SLEEPING_TIME)):

@@ -5,11 +5,12 @@ import time
 from tqdm import tqdm
 from cam_scrapper import get_cam_frame, get_available_cams
 from face_extractor import get_faces_from_frame
+from utils import close_windows
 
 LABELS = ['arthur', 'barbara', 'brunna', 'douglas', 'eliezer', 'eslo', 'gustavo', 'jade', 
         'jessi', 'lais', 'lari', 'linna', 'lucas', 'maria', 'naty', 'paulo', 'scooby', 'tiago', 'vini']
 
-SLEEPING_TIME = 10
+SLEEPING_TIME = 5
 IMG_SIZE = (160, 160)
 
 DIR_PATH = 'dataset2/train/' # can be specified 'train' or 'val'
@@ -23,7 +24,7 @@ def choose_label():
 
     print('\nWhose face is this?\n')
     for label in LABELS:
-        print(str(count) + ' - ' + label + '\n')
+        print(str(count) + ' - ' + label)
         count += 1
 
     selected = input('Select a label by number or just leave blank to skip: ')
@@ -31,15 +32,6 @@ def choose_label():
         raise Exception('Blank input')
 
     return LABELS[int(selected)];
-
-def close_windows():
-    """
-    Kludge to make destroyAllWindows method work
-    """
-    cv2.waitKey(1)
-    cv2.destroyAllWindows()
-    for i in range (1,5):
-        cv2.waitKey(1)
 
 labeled_amount = 0
 detector = MTCNN(min_face_size = 30)
@@ -60,7 +52,7 @@ while True:
         for face in faces:
 
             # show the recognized face
-            cv2.imshow('label this face', face)
+            cv2.imshow('label this face', face['pixels'])
             cv2.waitKey(100)
 
             try:
@@ -73,7 +65,7 @@ while True:
 
                 # composes filename and saves labeled face
                 filename = label + str(len(os.listdir(path)) + 1) + '.jpg'
-                cv2.imwrite(path + '/' + filename, face)
+                cv2.imwrite(path + '/' + filename, face['pixels'])
 
                 print('\nA face was labeled: ' + filename)
                 labeled_amount += 1

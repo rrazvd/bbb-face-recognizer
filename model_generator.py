@@ -6,23 +6,10 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, confusion_matrix
 from joblib import dump
+from face_extractor import get_faces_from_dir
 
-TRAIN_DATASET_PATH = 'labeled_dataset2/train'
-VAL_DATASET_PATH = 'labeled_dataset2/val'
-
-def get_faces_from_dir(path):
-    """
-    Returns array with available faces on dir.
-
-    :param path: path string to dir
-
-    :return array of faces
-    """
-    faces = []
-    for filename in os.listdir(path):
-        face = cv2.imread(path+'/'+filename)
-        faces.append(face)
-    return faces
+TRAIN_DATASET_PATH = 'dataset2/train'
+VAL_DATASET_PATH = 'dataset2/val'
 
 def load_dataset(path):
     """
