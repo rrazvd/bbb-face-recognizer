@@ -1,4 +1,4 @@
-from config import LABELS, TRAIN_DATASET_DIR_PATH, IMG_SIZE, DETECTOR_MIN_FACE_SIZE
+from config import TRAIN_DATASET_DIR_PATH, VAL_DATASET_DIR_PATH, IMG_SIZE, DETECTOR_MIN_FACE_SIZE
 from cam_scrapper import get_cam_frame, get_available_cams
 from face_extractor import get_faces_from_frame
 from utils import close_windows
@@ -8,12 +8,22 @@ import time
 import cv2
 import os
 
+SLEEPING_TIME = 5 # time between cams iteration
+
+DIR_PATH = TRAIN_DATASET_DIR_PATH # can be switched to VAL_DATASET_DIR_PATH if want populate validation
+if not os.path.exists(DIR_PATH): os.makedirs(DIR_PATH)
+
 LABELS = ['arthur', 'barbara', 'brunna', 'douglas', 'eliezer', 'eslo', 'gustavo', 'jade', 
         'jessi', 'lais', 'lari', 'linna', 'lucas', 'maria', 'naty', 'paulo', 'scooby', 'tiago', 'vini']
-SLEEPING_TIME = 5
 
-DIR_PATH = TRAIN_DATASET_DIR_PATH # can be switched to VAL_DATASET_DIR_PATH
-if not os.path.exists(DIR_PATH): os.makedirs(DIR_PATH)
+# create dir for each label
+for label in LABELS:
+    # create in train dir
+    path = TRAIN_DATASET_DIR_PATH + label
+    if not os.path.exists(path): os.makedirs(path)
+    # create in validation dir
+    path = VAL_DATASET_DIR_PATH + label
+    if not os.path.exists(path): os.makedirs(path)
 
 def choose_label():
     """
