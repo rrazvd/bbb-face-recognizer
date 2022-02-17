@@ -1,22 +1,21 @@
-import time
-from joblib import load
-from mtcnn import MTCNN
-from tqdm import tqdm
+from config import IMG_SIZE, DETECTOR_MIN_FACE_SIZE, FACENET_MODEL_KEY, MODEL_JOBLIB_PATH, LABEL_ENCODER_JOBLIB_PATH
 from cam_scrapper import get_available_cams, get_cam_frame
 from face_extractor import get_faces_from_frame
-from keras_facenet import FaceNet
 from utils import close_windows, draw_label
+from keras_facenet import FaceNet
+from mtcnn import MTCNN
+from joblib import load
+from tqdm import tqdm
 import numpy as np
+import time
 import cv2
 
 SLEEPING_TIME = 10
-IMG_SIZE = (160, 160)
 
-detector = MTCNN(min_face_size = 30)
-embedder = FaceNet(key='20170511-185253')
-
-model = load('model.joblib')
-label_encoder = load('label_encoder.joblib')
+detector = MTCNN(min_face_size = DETECTOR_MIN_FACE_SIZE)
+embedder = FaceNet(key = FACENET_MODEL_KEY)
+model = load(MODEL_JOBLIB_PATH)
+label_encoder = load(LABEL_ENCODER_JOBLIB_PATH)
 
 def predict(face):
     """
@@ -27,7 +26,6 @@ def predict(face):
     :return label and probability array
     """
     # embedding
-    embedder = FaceNet(key='20170511-185253')
     embedded_face = embedder.embeddings([face])
 
     # predict

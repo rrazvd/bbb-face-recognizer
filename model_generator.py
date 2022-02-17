@@ -1,15 +1,12 @@
-import cv2
-import os
-import numpy as np
-from keras_facenet import FaceNet
-from sklearn.preprocessing import LabelEncoder
-from sklearn.svm import SVC
+from config import TRAIN_DATASET_DIR_PATH, VAL_DATASET_DIR_PATH, MODEL_FILES_DIR_PATH, MODEL_JOBLIB_PATH, LABEL_ENCODER_JOBLIB_PATH, FACENET_MODEL_KEY
 from sklearn.metrics import accuracy_score, confusion_matrix
-from joblib import dump
+from sklearn.preprocessing import LabelEncoder
 from face_extractor import get_faces_from_dir
-
-TRAIN_DATASET_PATH = 'dataset2/train'
-VAL_DATASET_PATH = 'dataset2/val'
+from keras_facenet import FaceNet
+from sklearn.svm import SVC
+from joblib import dump
+import numpy as np
+import os
 
 def load_dataset(path):
     """
@@ -31,11 +28,11 @@ def load_dataset(path):
 
 
 # load train and val datasets
-X_train, y_train = load_dataset(TRAIN_DATASET_PATH)
-X_val, y_val = load_dataset(VAL_DATASET_PATH)
+X_train, y_train = load_dataset(TRAIN_DATASET_DIR_PATH)
+X_val, y_val = load_dataset(VAL_DATASET_DIR_PATH)
 
 # face embedding
-embedder = FaceNet(key='20170511-185253')
+embedder = FaceNet(key = FACENET_MODEL_KEY)
 X_train = embedder.embeddings(X_train)
 X_val = embedder.embeddings(X_val)
 
@@ -61,5 +58,6 @@ print('Accuracy: ' + str(acc_score*100))
 print('Confusion matrix: \n' + str(matrix))
 
 # save svm model and label encoder
-dump(model, 'model.joblib')
-dump(label_encoder, 'label_encoder.joblib')
+if not os.path.exists(MODEL_FILES_DIR_PATH): os.makedirs(MODEL_FILES_DIR_PATH)
+dump(model, MODEL_JOBLIB_PATH)
+dump(label_encoder, LABEL_ENCODER_JOBLIB_PATH)

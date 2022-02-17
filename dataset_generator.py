@@ -1,19 +1,18 @@
-import cv2
-from mtcnn import MTCNN
-import os
-import time
-from tqdm import tqdm
+from config import LABELS, TRAIN_DATASET_DIR_PATH, IMG_SIZE, DETECTOR_MIN_FACE_SIZE
 from cam_scrapper import get_cam_frame, get_available_cams
 from face_extractor import get_faces_from_frame
 from utils import close_windows
+from mtcnn import MTCNN
+from tqdm import tqdm
+import time
+import cv2
+import os
 
 LABELS = ['arthur', 'barbara', 'brunna', 'douglas', 'eliezer', 'eslo', 'gustavo', 'jade', 
         'jessi', 'lais', 'lari', 'linna', 'lucas', 'maria', 'naty', 'paulo', 'scooby', 'tiago', 'vini']
-
 SLEEPING_TIME = 5
-IMG_SIZE = (160, 160)
 
-DIR_PATH = 'dataset2/train/' # can be specified 'train' or 'val'
+DIR_PATH = TRAIN_DATASET_DIR_PATH # can be switched to VAL_DATASET_DIR_PATH
 if not os.path.exists(DIR_PATH): os.makedirs(DIR_PATH)
 
 def choose_label():
@@ -34,7 +33,7 @@ def choose_label():
     return LABELS[int(selected)];
 
 labeled_amount = 0
-detector = MTCNN(min_face_size = 30)
+detector = MTCNN(min_face_size = DETECTOR_MIN_FACE_SIZE)
 cv2.startWindowThread()
 
 while True:

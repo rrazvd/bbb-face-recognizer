@@ -1,5 +1,6 @@
 dataset/
 dataset2/
+model_files/
 labeled_dataset
 labeled_dataset2
 .DS_Store
