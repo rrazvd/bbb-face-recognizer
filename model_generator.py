@@ -18,6 +18,7 @@ def load_dataset(path):
     """
     X, y = [], []
 
+    # iterate over each label on dataset
     for label in os.listdir(path):
         faces = get_faces_from_dir(path + '/' + label + '/')
         labels = [label for _ in range(len(faces))]
@@ -50,12 +51,19 @@ model.fit(X_train, y_train)
 y_train_p = model.predict(X_train)
 y_val_p = model.predict(X_val)
 
-# metrics
-acc_score = accuracy_score(y_val, y_val_p)
-matrix = confusion_matrix(y_val, y_val_p)
+# train metrics
+acc_score_train = accuracy_score(y_train, y_train_p)
+matrix_train = confusion_matrix(y_train, y_train_p)
 
-print('Accuracy: ' + str(acc_score*100))
-print('Confusion matrix: \n' + str(matrix))
+print('\nTrain accuracy: ' + str(acc_score_train * 100))
+print('Train confusion matrix: \n' + str(matrix_train))
+
+# validation metrics
+acc_score_val = accuracy_score(y_val, y_val_p)
+matrix_val = confusion_matrix(y_val, y_val_p)
+
+print('\nValidation accuracy: ' + str(acc_score_val * 100))
+print('Validation confusion matrix: \n' + str(matrix_val))
 
 # save svm model and label encoder
 if not os.path.exists(MODEL_FILES_DIR_PATH): os.makedirs(MODEL_FILES_DIR_PATH)
