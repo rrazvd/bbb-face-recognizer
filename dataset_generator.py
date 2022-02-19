@@ -1,20 +1,25 @@
 from config import TRAIN_DATASET_DIR_PATH, VAL_DATASET_DIR_PATH, IMG_SIZE, DETECTOR_MIN_FACE_SIZE
-from cam_scrapper import get_cam_frame, get_available_cams
+from cam_scraper import get_cam_frame, get_available_cams
 from face_extractor import get_faces_from_frame
 from utils import close_windows
 from mtcnn import MTCNN
 from tqdm import tqdm
 import time
 import cv2
+import sys
 import os
-
-SLEEPING_TIME = 5 # time between cams iteration
-
-DIR_PATH = TRAIN_DATASET_DIR_PATH # can be switched to VAL_DATASET_DIR_PATH if want populate validation
-if not os.path.exists(DIR_PATH): os.makedirs(DIR_PATH)
 
 LABELS = ['arthur', 'barbara', 'brunna', 'douglas', 'eliezer', 'eslo', 'gustavo', 'jade', 
         'jessi', 'lais', 'lari', 'linna', 'lucas', 'maria', 'naty', 'paulo', 'scooby', 'tiago', 'vini']
+
+# time between cams iteration
+SLEEPING_TIME = 5
+
+# "-val" as first command line argument if want populate validation dataset (defaults to train)
+DIR_PATH = VAL_DATASET_DIR_PATH if len(sys.argv) > 1 and sys.argv[1] == '-val' else TRAIN_DATASET_DIR_PATH
+if not os.path.exists(DIR_PATH): os.makedirs(DIR_PATH)
+
+print('\nPopulating train dataset...\n') if DIR_PATH == TRAIN_DATASET_DIR_PATH else print('\nPopulating validation dataset...\n')
 
 # create dir for each label
 for label in LABELS:
@@ -36,24 +41,30 @@ def choose_label():
         print(str(count) + ' - ' + label)
         count += 1
 
-    selected = input('Select a label by number or just leave blank to skip: ')
+    selected = input('\nSelect a label by number or just leave blank to skip: ')
     if (selected == ''):
         raise Exception('Blank input')
 
     return LABELS[int(selected)];
 
-labeled_amount = 0
+# get detector model
 detector = MTCNN(min_face_size = DETECTOR_MIN_FACE_SIZE)
+
+# labeled amount per session counter
+labeled_amount = 0
+
+# scrap available cams
+AVAILABLE_CAMS = get_available_cams()
+
 cv2.startWindowThread()
 
 while True:
 
-    for cam in get_available_cams():
+    # iterate over cams
+    for cam in AVAILABLE_CAMS:
 
-        # get cam frame by cam code and show it
-        frame = get_cam_frame(cam)
-        cv2.imshow('Cam ' + cam,frame)
-        cv2.waitKey(1000)
+        # get cam frame by snapshot link and show it
+        frame = get_cam_frame(cam['snapshot_link'])
 
         # get faces on frame
         faces = get_faces_from_frame(frame, detector, IMG_SIZE)
@@ -83,10 +94,10 @@ while True:
             finally:
                 close_windows()
 
-        close_windows()    
-        print('\n' + str(len(faces)) + ' faces were found on Cam ' + cam + ', and ' + str(labeled_amount) + ' faces were labeled in this session')
+        close_windows()
+        print('\n' + str(len(faces)) + ' faces were found on ' + cam['name'] + ' - ' + cam['location'] + ' and ' + str(labeled_amount) + ' faces were labeled in this session')
 
     print('\nSleeping for ' + str(SLEEPING_TIME) + ' seconds...\n')
-    
+
     for i in tqdm(range(SLEEPING_TIME)):
         time.sleep(1)
