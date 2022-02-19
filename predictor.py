@@ -76,7 +76,7 @@ for cam in available_cams:
     
     # cam frame visualization 
     if VISUALIZATION_ENABLED:
-        cv2.imshow(cam['name'] + ' - ' + cam['location'],frame)
+        cv2.imshow(cam['name'] + ' - ' + cam['location'], frame)
         cv2.waitKey(CAM_VISUALIZATION_TIME)
         close_windows()
 

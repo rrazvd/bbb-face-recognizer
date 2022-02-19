@@ -34,7 +34,7 @@ def get_faces_from_frame(frame, detector, output_size, min_confidence = 0.9, mar
 
                 # resize according by output size and append on the list
                 resized_face = cv2.resize(cropped_face, output_size)
-                extracted_faces.append({"pixels": resized_face, "coordinates": ((x1, y1), (x2,y2))})
+                extracted_faces.append({"pixels": resized_face, "coordinates": {"topLeft": (x1, y1), "bottomRight": (x2,y2)}})
 
                 # renders a green face marker if needed
                 if marker: cv2.rectangle(frame, (x1-1,y1-1), (x2,y2), (100, 255,100), 1)

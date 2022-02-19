@@ -18,7 +18,7 @@ def draw_label(frame, coordinates, label, probability):
     :param label: string of predicted label
     :param probability: float of probability
     """
-    x1, y1 = coordinates[0]
+    x1, y1 = coordinates['topLeft']
     font = cv2.FONT_HERSHEY_SIMPLEX
     fontScale = 0.45
     fontColor = (0,255,0)
