@@ -2,67 +2,86 @@ from pyppeteer import launch
 import numpy as np
 import requests
 import asyncio
-import json
 import cv2
+import json
 
-def get_available_cams():
-    """
-    Returns scraped available cams.
+class CamScraper():
+    
+    def __init__(self):
+        self.browser = None
+        self.page = None
+        self.scraped = None
 
-    :return array of cams dict
-    """
-    async def interceptResponse(response, target_url, result):
-        if (response.url.startswith(target_url)):
-            try:
-                if "application/json" in response.headers.get("content-type", ""):
-                    json_data = await response.json()
-                    result.append(json_data['data']['localizedOffer']['paginatedItems']['resources'])
-                    return
-            except json.decoder.JSONDecodeError:
-                pass
-                
-    async def browser_launcher():
-        browser = await launch()
-        page = await browser.newPage()
+    async def scrape_available_cams(self):
+        """
+        Returns scraped available cams.
 
-        result = []
+        :return array of cams dict
+        """
+        if (self.browser == None):
+            raise Exception('Need to launch browser first')
+
+        print('\nScrapping cams...\n')
+        
+        await self.page.goto('https://globoplay.globo.com/categorias/big-brother-brasil/')
+
+        if (self.scraped == None):
+            raise Exception('Unable to perform cam scraping')
+
+        cams = []
+        for cam in self.scraped:
+            cams.append(
+                {'name': cam['name'], 'location': cam['media']['headline'], 'snapshot_link': cam['media']['liveThumbnail'], 
+                'slug': cam['slug'], 'media_id': cam['mediaId'],
+                'stream_link': 'https://globoplay.globo.com/'+cam['slug']+'/ao-vivo/'+cam['mediaId']+'/?category=bbb'}
+            )
+            
+        print(str(len(cams)) + ' cams were scraped.\n')
+
+        return cams
+
+    async def response_interceptor(self, response):
         target_url = 'https://cloud-jarvis.globo.com/graphql?operationName=getOfferBroadcastByIdAndAffiliateCode'
-        page.on('response', 
-           lambda response: asyncio.ensure_future(interceptResponse(response, target_url, result)))
+        
+        try:
+            if (response.url.startswith(target_url) and "application/json" in response.headers.get("content-type", "")):
+                json_data = await response.json()
+                self.scraped = json_data['data']['localizedOffer']['paginatedItems']['resources']
+        except json.decoder.JSONDecodeError:
+            self.scraped = None
 
-        await page.goto('https://globoplay.globo.com/categorias/big-brother-brasil/')
-        await browser.close()
-        return result
+    async def launch_browser(self):
+        """
+        Launch browser process.
+        """
+        print('\nLaunching browser...')
+        self.browser = await launch()
 
-    print('\nScrapping cams...\n')
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(browser_launcher())
-    loop.close()
+        # open a new page
+        self.page = await self.browser.newPage()
+       
+        # add response interceptor
+        self.page.on('response', 
+        lambda response: asyncio.ensure_future(self.response_interceptor(response)))
 
-    if (len(result) == 0):
-        raise Exception('Unable to perform cam scraping')
+        print('Browser launched.\n')
 
-    cams = []
-    for cam in result[0]:
-        cams.append(
-            {'name': cam['name'], 'location': cam['media']['headline'], 'snapshot_link': cam['media']['liveThumbnail'], 
-            'slug': cam['slug'], 'media_id': cam['mediaId'],
-            'stream_link': 'https://globoplay.globo.com/'+cam['slug']+'/ao-vivo/'+cam['mediaId']+'/?category=bbb'}
-        )
+    async def close_browser(self):
+        """
+        Close browser process.
+        """
+        print('\nClosing browser...')
+        await self.browser.close()
+        print('Browser closed.\n')
 
-    print(str(len(cams)) + ' cams were scraped.\n')
+    def scrape_cam_frame(self, snapshot_link):
+        """
+        Returns frame array according by snapshot link.
 
-    return cams
+        :param snapshot_link: url string of snapshot link
 
-def get_cam_frame(snapshot_link):
-    """
-    Returns frame array according by snapshot link.
-
-    :param snapshot_link: url string of snapshot link
-
-    :return frame array
-    """
-    resp = requests.get(snapshot_link, stream=True).raw
-    image = np.asarray(bytearray(resp.read()), dtype="uint8")
-    return cv2.imdecode(image, cv2.IMREAD_COLOR)
-
+        :return frame array
+        """
+        resp = requests.get(snapshot_link, stream=True).raw
+        image = np.asarray(bytearray(resp.read()), dtype="uint8")
+        return cv2.imdecode(image, cv2.IMREAD_COLOR)
