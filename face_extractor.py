@@ -1,56 +1,53 @@
+from mtcnn import MTCNN
 import cv2, os
-
-def get_faces_from_frame(frame, detector, output_size, min_confidence = 0.9, marker = False, padding = 10):
+class FaceExtractor():
     """
-    Returns extracted faces array from frame.
-
-    :param frame: frame pixel array
-    :param detector: MTCNN()
-    :param output_size: int tuple
-    :param min_confidence: float (defaults 0.9)
-    :param marker: boolean (defaults False)
-    :param padding: int (defaults 10)
-
-    :return extracted faces arrays
+    Class that represents a face extractor.
     """
-    extracted_faces = []
-    faces = detector.detect_faces(frame)
+    def __init__(self, output_size, min_face_size = 30, min_confidence = 0.9):
+        """
+        :param output_size: int tuple to define in pixels the output size
+        :param min_confidence: float (defaults 0.9)
+        :param min_face_size: minimum size of the face to detect
+        """
+        self.output_size = output_size
+        self.detector = MTCNN(min_face_size = min_face_size)
+        self.min_confidence = min_confidence
 
-    for face in faces:      
+    def get_faces_from_frame(self, frame, face_marker = False, padding = 10):
+        """
+        Returns extracted faces array from frame.
 
-        # filters faces according minimum confidence
-        if face['confidence'] >= min_confidence: 
-            
-            x, y, w, h = face['box']
+        :param frame: frame pixel array
+        :param face_marker: boolean (defaults False)
+        :param padding: int (defaults 10)
 
-            # defines box coordinates with padding
-            x1, y1 = (x - padding), (y - padding)
-            x2, y2 = (x + w + padding), (y + h + padding)
+        :return extracted faces arrays
+        """
+        extracted_faces = []
+        faces = self.detector.detect_faces(frame)
 
-            # crops face from frame using box coordinates
-            cropped_face = frame[y1:y2, x1:x2]
+        for face in faces:      
 
-            if len(cropped_face) > 0: 
+            # filters faces according minimum confidence
+            if face['confidence'] >= self.min_confidence: 
+                
+                x, y, w, h = face['box']
 
-                # resize according by output size and append on the list
-                resized_face = cv2.resize(cropped_face, output_size)
-                extracted_faces.append({"pixels": resized_face, "coordinates": {"topLeft": (x1, y1), "bottomRight": (x2,y2)}})
+                # defines box coordinates with padding
+                x1, y1 = (x - padding), (y - padding)
+                x2, y2 = (x + w + padding), (y + h + padding)
 
-                # renders a green face marker if needed
-                if marker: cv2.rectangle(frame, (x1-1,y1-1), (x2,y2), (100, 255,100), 1)
+                # crops face from frame using box coordinates
+                cropped_face = frame[y1:y2, x1:x2]
 
-    return extracted_faces
+                if len(cropped_face) > 0: 
 
-def get_faces_from_dir(path):
-    """
-    Returns array with available faces on dir.
+                    # resize according by output size and append on the list
+                    resized_face = cv2.resize(cropped_face, self.output_size)
+                    extracted_faces.append({"pixels": resized_face, "coordinates": {"topLeft": (x1, y1), "bottomRight": (x2,y2)}})
 
-    :param path: path string to dir
+                    # renders a green face marker if needed
+                    if face_marker: cv2.rectangle(frame, (x1-1,y1-1), (x2,y2), (100, 255,100), 1)
 
-    :return array of faces
-    """
-    faces = []
-    for filename in os.listdir(path):
-        face = cv2.imread(path+'/'+filename)
-        faces.append(face)
-    return faces
+        return extracted_faces

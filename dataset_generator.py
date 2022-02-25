@@ -1,8 +1,7 @@
-from config import TRAIN_DATASET_DIR_PATH, VAL_DATASET_DIR_PATH, IMG_SIZE, DETECTOR_MIN_FACE_SIZE
+from config import TRAIN_DATASET_DIR_PATH, VAL_DATASET_DIR_PATH, IMG_SIZE
 from cam_scraper import CamScraper
-from face_extractor import get_faces_from_frame
+from face_extractor import FaceExtractor
 from utils import close_windows
-from mtcnn import MTCNN
 from tqdm import tqdm
 import asyncio
 import cv2
@@ -49,15 +48,18 @@ def choose_label():
 
 
 async def main():
-    # get detector model
-    detector = MTCNN(min_face_size = DETECTOR_MIN_FACE_SIZE)
+   
+    # get face extractor
+    face_extractor = FaceExtractor(IMG_SIZE)
 
     # labeled amount per session counter
     labeled_amount = 0
 
+    # scrape available cams
     cs = CamScraper()
     await cs.launch_browser()
     AVAILABLE_CAMS = await cs.scrape_available_cams()
+    await cs.close_browser()
 
     cv2.startWindowThread()
 
@@ -70,7 +72,7 @@ async def main():
             frame = cs.scrape_cam_frame(cam['snapshot_link'])
 
             # get faces on frame
-            faces = get_faces_from_frame(frame, detector, IMG_SIZE)
+            faces = face_extractor.get_faces_from_frame(frame, IMG_SIZE)
 
             for face in faces:
 

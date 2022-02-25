@@ -6,7 +6,9 @@ import cv2
 import json
 
 class CamScraper():
-    
+    """
+    Class that represents a cam scraper.
+    """
     def __init__(self):
         self.browser = None
         self.page = None
@@ -18,10 +20,10 @@ class CamScraper():
 
         :return array of cams dict
         """
+        print('\nScrapping cams...\n')
+
         if (self.browser == None):
             raise Exception('Need to launch browser first')
-
-        print('\nScrapping cams...\n')
         
         await self.page.goto('https://globoplay.globo.com/categorias/big-brother-brasil/')
 
@@ -41,6 +43,9 @@ class CamScraper():
         return cams
 
     async def response_interceptor(self, response):
+        """
+        Intercepts response with cams data
+        """
         target_url = 'https://cloud-jarvis.globo.com/graphql?operationName=getOfferBroadcastByIdAndAffiliateCode'
         
         try:

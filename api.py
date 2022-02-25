@@ -1,5 +1,5 @@
-
-from predictor import Predictor
+from config import IMG_SIZE, FACENET_MODEL_KEY
+from face_predictor import FacePredictor
 from cam_scraper import CamScraper
 from fastapi import FastAPI, Response
 from starlette.responses import RedirectResponse
@@ -14,7 +14,7 @@ app = FastAPI()
 @app.on_event("startup")
 async def startup_event():
     app.state.cams = []
-    app.state.predictor = Predictor()
+    app.state.predictor = FacePredictor(IMG_SIZE, FACENET_MODEL_KEY)
 
     app.state.cam_scraper = CamScraper()
     await app.state.cam_scraper.launch_browser()

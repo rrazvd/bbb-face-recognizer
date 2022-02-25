@@ -1,17 +1,23 @@
-from config import DETECTOR_MIN_FACE_SIZE, FACENET_MODEL_KEY, MODEL_JOBLIB_PATH, LABEL_ENCODER_JOBLIB_PATH, IMG_SIZE
+from config import MODEL_JOBLIB_PATH, LABEL_ENCODER_JOBLIB_PATH
 from keras_facenet import FaceNet
-from face_extractor import get_faces_from_frame
-from utils import draw_label, close_windows
-from mtcnn import MTCNN
+from face_extractor import FaceExtractor
+from utils import close_windows
 from joblib import load
 import numpy as np
 import cv2
 
-class Predictor:
-    
-    def __init__(self):
-        self.detector = MTCNN(min_face_size = DETECTOR_MIN_FACE_SIZE)
-        self.embedder = FaceNet(key = FACENET_MODEL_KEY)
+class FacePredictor:
+    """
+    Class that represents a face predictor.
+    """
+    def __init__(self, img_size, facenet_key):
+        """
+        Predict a face and returns label and probability array.
+        :param img_size: output size of image
+        :param facenet_key: string of facenet model key
+        """
+        self.extractor = FaceExtractor(img_size)
+        self.embedder = FaceNet(key = facenet_key)
         self.classifier = load(MODEL_JOBLIB_PATH)
         self.label_encoder = load(LABEL_ENCODER_JOBLIB_PATH)
 
@@ -58,7 +64,7 @@ class Predictor:
         """
         
         # get faces on frame
-        faces = get_faces_from_frame(frame, self.detector, IMG_SIZE, marker = visualization_enabled)
+        faces = self.extractor.get_faces_from_frame(frame, face_marker = visualization_enabled)
 
         # create list to store recognized_faces per frame
         recognized_faces = []
@@ -69,7 +75,7 @@ class Predictor:
             recognized_faces.append({"name": label[0], "probability": label_prob, "coordinates": face['coordinates']})
             
             # draw label text
-            if visualization_enabled: draw_label(frame, face['coordinates'], label, label_prob)
+            if visualization_enabled: self.draw_label(frame, face['coordinates'], label, label_prob)
         
         # frame visualization 
         if visualization_enabled:
@@ -78,3 +84,21 @@ class Predictor:
             close_windows()
 
         return recognized_faces
+
+    
+    def draw_label(self, frame, coordinates, label, probability):
+        """
+        Draws the text label with probability above box face.
+
+        :param frame: frame pixel array
+        :param coordinates: tuple with box face coordinates
+        :param label: string of predicted label
+        :param probability: float of probability
+        """
+        x1, y1 = coordinates['topLeft']
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        fontScale = 0.45
+        fontColor = (0,255,0)
+
+        text = '%s (%.2f)' % (label[0], probability) 
+        cv2.putText(frame, text, (x1, y1 - 10), font, fontScale, fontColor, 1, 2) 

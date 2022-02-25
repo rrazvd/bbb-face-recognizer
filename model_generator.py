@@ -1,12 +1,26 @@
 from config import TRAIN_DATASET_DIR_PATH, VAL_DATASET_DIR_PATH, MODEL_FILES_DIR_PATH, MODEL_JOBLIB_PATH, LABEL_ENCODER_JOBLIB_PATH, FACENET_MODEL_KEY
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.preprocessing import LabelEncoder
-from face_extractor import get_faces_from_dir
 from keras_facenet import FaceNet
 from sklearn.svm import SVC
 from joblib import dump
 import numpy as np
+import cv2
 import os
+
+def get_faces_from_dir(path):
+    """
+    Returns array with available faces on dir.
+
+    :param path: path string to dir
+
+    :return array of faces
+    """
+    faces = []
+    for filename in os.listdir(path):
+        face = cv2.imread(path+'/'+filename)
+        faces.append(face)
+    return faces
 
 def load_dataset(path):
     """
