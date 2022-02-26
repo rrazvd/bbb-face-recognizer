@@ -7,7 +7,10 @@ from starlette.status import HTTP_204_NO_CONTENT
 import asyncio
 
 # seconds between scrape and predict cams
-SLEEPING_TIME = 30
+SLEEPING_TIME = 10
+
+# cam frame visualization?
+VISUALIZATION_ENABLED = True
 
 app = FastAPI()
 
@@ -34,7 +37,7 @@ async def scrape_and_predict_cams():
                 frame = app.state.cam_scraper.scrape_cam_frame(cam['snapshot_link'])
 
                 # get recognized faces on cam frame
-                recognized_faces = app.state.predictor.predict_frame(frame, visualization_enabled = False)
+                recognized_faces = app.state.predictor.predict_frame(frame, visualization_enabled = VISUALIZATION_ENABLED)
 
                 # append recognized faces on cam dict
                 cam['recognized_faces'] = recognized_faces
