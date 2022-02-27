@@ -3,26 +3,37 @@ from face_predictor import FacePredictor
 from cam_scraper import CamScraper
 from fastapi import FastAPI, Response
 from starlette.responses import RedirectResponse
-from starlette.status import HTTP_204_NO_CONTENT
+from starlette.status import HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 import asyncio
 
 # seconds between scrape and predict cams
-SLEEPING_TIME = 10
+SLEEPING_TIME = 30
 
 # cam frame visualization?
-VISUALIZATION_ENABLED = True
+VISUALIZATION_ENABLED = False
 
 app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
+    
+    # list to store scraped cams with predicts
     app.state.cams = []
+    
+    # creste face predictor and get labels
     app.state.predictor = FacePredictor(IMG_SIZE, FACENET_MODEL_KEY)
+    app.state.labels = app.state.predictor.get_labels()
+    
+    # dict to store cams by label
+    app.state.cams_by_label = {}
+    for label in app.state.labels:
+        app.state.cams_by_label[label] = []
 
+    # create cam scrapper and launch browser
     app.state.cam_scraper = CamScraper()
     await app.state.cam_scraper.launch_browser()
 
-    # create task to update cams with recognized faces
+    # create task to update cams with predicted faces
     asyncio.create_task(scrape_and_predict_cams())
 
 async def scrape_and_predict_cams():
@@ -42,7 +53,11 @@ async def scrape_and_predict_cams():
                 # append recognized faces on cam dict
                 cam['recognized_faces'] = recognized_faces
 
-            # update cams state
+                # update cams by label dict
+                for face in recognized_faces:
+                    app.state.cams_by_label[face['label']].append(cam)
+
+            # update cams dict
             app.state.cams = cams
 
         except Exception as e:
@@ -60,7 +75,11 @@ def get_cams():
 
 @app.get("/labels")
 def get_labels():
-    return app.state.predictor.get_labels()
+    return app.state.labels
+
+@app.get("/cams/{label}")
+def get_cams_by_label(label):
+    return app.state.cams_by_label[label] if label in app.state.labels else Response(status_code=HTTP_404_NOT_FOUND)
 
 @app.on_event("shutdown")
 async def shutdown_event():

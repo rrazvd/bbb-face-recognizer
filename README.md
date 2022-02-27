@@ -85,7 +85,7 @@ Upon successful run, access in your browser [http://127.0.0.1:8000/cams](http://
     "stream_link": "https://globoplay.globo.com/bbb-22-camera-1/ao-vivo/244881/?category=bbb",
     "recognized_faces": [
       {
-        "name": "arthur",
+        "label": "arthur",
         "probability": 64.19885945991763,
         "coordinates": {
           "topLeft": [
@@ -99,7 +99,7 @@ Upon successful run, access in your browser [http://127.0.0.1:8000/cams](http://
         }
       },
       {
-        "name": "eliezer",
+        "label": "eliezer",
         "probability": 39.81395352766756,
         "coordinates": {
           "topLeft": [
@@ -113,7 +113,7 @@ Upon successful run, access in your browser [http://127.0.0.1:8000/cams](http://
         }
       },
       {
-        "name": "scooby",
+        "label": "scooby",
         "probability": 37.971779438946054,
         "coordinates": {
           "topLeft": [
@@ -144,4 +144,3 @@ For more details access [FAST API documentation](https://fastapi.tiangolo.com/).
 ## TO DO
 
 - `cam_scraper.py`: upgrade scrape_cam_frame() to get a high definition cam frame.
-- `api.py`: create new route that returns cams by specific label.

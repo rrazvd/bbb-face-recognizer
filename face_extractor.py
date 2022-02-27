@@ -1,5 +1,6 @@
 from mtcnn import MTCNN
-import cv2, os
+import cv2
+
 class FaceExtractor():
     """
     Class that represents a face extractor.

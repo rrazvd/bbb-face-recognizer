@@ -72,7 +72,7 @@ class FacePredictor:
         # predict all faces
         for face in faces:
             label, label_prob, y_prob = self.predict(face['pixels'])
-            recognized_faces.append({"name": label[0], "probability": label_prob, "coordinates": face['coordinates']})
+            recognized_faces.append({"label": label[0], "probability": label_prob, "coordinates": face['coordinates']})
             
             # draw label text
             if visualization_enabled: self.draw_label(frame, face['coordinates'], label, label_prob)
