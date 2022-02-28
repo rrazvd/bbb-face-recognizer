@@ -2,6 +2,7 @@ from config import IMG_SIZE, FACENET_MODEL_KEY
 from face_predictor import FacePredictor
 from cam_scraper import CamScraper
 from fastapi import FastAPI, Response
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
 import asyncio
@@ -14,20 +15,26 @@ VISUALIZATION_ENABLED = False
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.on_event("startup")
 async def startup_event():
     
     # list to store scraped cams with predicts
     app.state.cams = []
     
-    # creste face predictor and get labels
+    # create face predictor and get labels
     app.state.predictor = FacePredictor(IMG_SIZE, FACENET_MODEL_KEY)
     app.state.labels = app.state.predictor.get_labels()
     
     # dict to store cams by label
     app.state.cams_by_label = {}
-    for label in app.state.labels:
-        app.state.cams_by_label[label] = []
 
     # create cam scrapper and launch browser
     app.state.cam_scraper = CamScraper()
@@ -40,6 +47,11 @@ async def scrape_and_predict_cams():
    
     while True:
         try:
+            
+            # clear cams by label
+            for label in app.state.labels:
+                app.state.cams_by_label[label] = []
+
             # scrap available cams
             cams = await app.state.cam_scraper.scrape_available_cams()
             
