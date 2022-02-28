@@ -64,6 +64,9 @@ class CamScraper():
 
         # open a new page
         self.page = await self.browser.newPage()
+
+        # disable navigation timeout
+        self.page.setDefaultNavigationTimeout(0)
        
         # add response interceptor
         self.page.on('response', 
