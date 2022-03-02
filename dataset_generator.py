@@ -8,8 +8,7 @@ import cv2
 import sys
 import os
 
-LABELS = ['arthur', 'barbara', 'brunna', 'douglas', 'eliezer', 'eslo', 'gustavo', 'jade', 
-        'jessi', 'lais', 'lari', 'linna', 'lucas', 'maria', 'naty', 'paulo', 'scooby', 'tiago', 'vini']
+LABELS = ['arthur', 'douglas', 'eliezer', 'eslo', 'gustavo', 'jade', 'jessi', 'lais', 'linna', 'lucas', 'naty', 'paulo', 'scooby', 'vini']
 
 # time between cams iteration
 SLEEPING_TIME = 5
