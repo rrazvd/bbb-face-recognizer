@@ -126,7 +126,9 @@ Upon successful run, access in your browser [http://127.0.0.1:8000/cams](http://
           ]
         }
       }
-    ]
+    ],
+    "scrape_timestamp": "2022-03-01T22:24:41.989674",
+    "frame_timestamp": "2022-03-01T22:24:42.307244"
   },
   ...
 ]
@@ -144,3 +146,4 @@ For more details access [FAST API documentation](https://fastapi.tiangolo.com/).
 ## TO DO
 
 - `cam_scraper.py`: upgrade scrape_cam_frame() to get a high definition cam frame.
+- `api.py`: use a database to store historical data
