@@ -12,7 +12,7 @@ import asyncio
 SLEEPING_TIME = 15
 
 # cam frame visualization?
-VISUALIZATION_ENABLED = True
+VISUALIZATION_ENABLED = False
 
 app = FastAPI()
 
