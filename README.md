@@ -141,7 +141,7 @@ To see all provided routes access the [documentation](http://127.0.0.1:8000/docs
 For more details access [FAST API documentation](https://fastapi.tiangolo.com/).
 
 > If you want to visualize the frame and face recognition on real time, set `VISUALIZATION_ENABLED` to `True` in the `api.py` file (use only for development), for
-> each cam frame will be apresented like the first screenshot apresented.
+> each cam frame will be apresented like the first screenshot.
 
 ## TO DO
 
