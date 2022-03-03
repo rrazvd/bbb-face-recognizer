@@ -2,6 +2,8 @@
 
 Face recognition system using MTCNN, FACENET, SVM and FAST API to track participants of Big Brother Brasil in real time.
 
+![Cam frame visualization](screenshots/frame_visualization.png)
+
 ## Instalation
 
 Install dependencies using `requirements.txt`
@@ -139,11 +141,11 @@ To see all provided routes access the [documentation](http://127.0.0.1:8000/docs
 For more details access [FAST API documentation](https://fastapi.tiangolo.com/).
 
 > If you want to visualize the frame and face recognition on real time, set `VISUALIZATION_ENABLED` to `True` in the `api.py` file (use only for development), for
-> each cam frame will be apresented like the screenshot below.
-
-![Cam frame visualization](screenshots/frame_visualization.png)
+> each cam frame will be apresented like the first screenshot apresented.
 
 ## TO DO
 
 - `cam_scraper.py`: upgrade scrape_cam_frame() to get a high definition cam frame.
+- `api.py`: return cam list by label based on probability
 - `api.py`: use a database to store historical data
+- `face_predictor.py`: predict emotions
