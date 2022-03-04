@@ -22,7 +22,7 @@ Is needed to build a dataset through `dataset_generator.py` script.
 
 This script builds a dataset with train and validation directories according by user labeling, using real time cam frames from reality show.
 
-On execute will be created a directory on root with the following structure:
+On execute will be created a directory on `src` folder with the following structure:
 
 ```
 dataset
@@ -54,7 +54,7 @@ For each label input, the .jpg image will be auto stored on respective dataset.
 
 Now is needed to generate a model through `model_generator.py` script.
 
-Upon successful execution, the accuracy and confusion matrix of train and validation will be presented, and a directory will be created in the root with the following structure:
+Upon successful execution, the accuracy and confusion matrix of train and validation will be presented, and a directory will be created in the `src` folder with the following structure:
 
 ```
 model_files
@@ -68,9 +68,10 @@ This files will be loaded by `face_predictor.py` to use generated model.
 
 Lastly the API can be started.
 
-For development purpose run the live server with command below.
+For development purpose run the live server with commands below.
 
 ```shell
+cd src
 uvicorn api:app --reload
 ```
 
