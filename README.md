@@ -59,10 +59,11 @@ Upon successful execution, the accuracy and confusion matrix of train and valida
 ```
 model_files
 └── label_encoder.joblib
+└── metrics.txt
 └── model.joblib
 ```
 
-This files will be loaded by `face_predictor.py` to use generated model.
+This joblib files will be loaded by `face_predictor.py` to use generated model.
 
 ### 3. API
 

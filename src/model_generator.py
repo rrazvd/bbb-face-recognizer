@@ -1,4 +1,4 @@
-from config import TRAIN_DATASET_DIR_PATH, VAL_DATASET_DIR_PATH, MODEL_FILES_DIR_PATH, MODEL_JOBLIB_PATH, LABEL_ENCODER_JOBLIB_PATH, FACENET_MODEL_KEY
+from config import TRAIN_DATASET_DIR_PATH, VAL_DATASET_DIR_PATH, MODEL_FILES_DIR_PATH, MODEL_JOBLIB_PATH, LABEL_ENCODER_JOBLIB_PATH, MODEL_METRICS_PATH, FACENET_MODEL_KEY
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from keras_facenet import FaceNet
@@ -69,19 +69,23 @@ y_val_p = model.predict(X_val)
 acc_score_train = accuracy_score(y_train, y_train_p)
 matrix_train = confusion_matrix(y_train, y_train_p)
 
-print('\nLabels: ' + str(label_encoder.classes_.tolist()))
-
-print('\nTrain accuracy: ' + str(acc_score_train * 100))
-print('Train confusion matrix: \n' + str(matrix_train))
-
 # validation metrics
 acc_score_val = accuracy_score(y_val, y_val_p)
 matrix_val = confusion_matrix(y_val, y_val_p)
-
-print('\nValidation accuracy: ' + str(acc_score_val * 100))
-print('Validation confusion matrix: \n' + str(matrix_val))
 
 # save svm model and label encoder
 if not os.path.exists(MODEL_FILES_DIR_PATH): os.makedirs(MODEL_FILES_DIR_PATH)
 dump(model, MODEL_JOBLIB_PATH)
 dump(label_encoder, LABEL_ENCODER_JOBLIB_PATH)
+
+# save model metrics
+metrics_str = ""
+metrics_str += '\nLabels: ' + str(label_encoder.classes_.tolist())
+metrics_str += '\n\nTrain accuracy: ' + str(acc_score_train * 100)
+metrics_str += '\n\nTrain confusion matrix: \n' + str(matrix_train)
+metrics_str += '\n\nValidation accuracy: ' + str(acc_score_val * 100)
+metrics_str += '\n\nValidation confusion matrix: \n' + str(matrix_val)
+f = open(MODEL_METRICS_PATH, "w")
+f.write(metrics_str)
+print (metrics_str)
+f.close()
