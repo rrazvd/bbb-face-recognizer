@@ -69,6 +69,8 @@ y_val_p = model.predict(X_val)
 acc_score_train = accuracy_score(y_train, y_train_p)
 matrix_train = confusion_matrix(y_train, y_train_p)
 
+print('\nLabels: ' + str(label_encoder.classes_.tolist()))
+
 print('\nTrain accuracy: ' + str(acc_score_train * 100))
 print('Train confusion matrix: \n' + str(matrix_train))
 

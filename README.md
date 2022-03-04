@@ -18,7 +18,7 @@ To use the project successfully, you need to follow the steps below.
 
 ### 1. Dataset
 
-Is needed to build a dataset through `dataset_generator.py` script.
+It is needed to build a dataset through the `dataset_generator.py` script.
 
 This script builds a dataset with train and validation directories according by user labeling, using real time cam frames from reality show.
 
@@ -52,7 +52,7 @@ For each label input, the .jpg image will be auto stored on respective dataset.
 
 ### 2. Model
 
-Now is needed to generate a model through `model_generator.py` script.
+Now is needed to generate a model through the `model_generator.py` script.
 
 Upon successful execution, the accuracy and confusion matrix of train and validation will be presented, and a directory will be created in the `src` folder with the following structure:
 
