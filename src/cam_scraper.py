@@ -32,12 +32,13 @@ class CamScraper():
 
         cams = []
         for cam in self.scraped:
-            cams.append(
-                {'name': cam['name'], 'location': cam['media']['headline'], 'snapshot_link': cam['media']['liveThumbnail'], 
-                'slug': cam['slug'], 'media_id': cam['mediaId'],
-                'stream_link': 'https://globoplay.globo.com/'+cam['slug']+'/ao-vivo/'+cam['mediaId']+'/?category=bbb'}
-            )
-            
+            if 'mosaico' not in cam['slug']:
+                cams.append(
+                    {'name': cam['name'], 'location': cam['media']['headline'], 'snapshot_link': cam['media']['liveThumbnail'], 
+                    'slug': cam['slug'], 'media_id': cam['mediaId'],
+                    'stream_link': 'https://globoplay.globo.com/'+cam['slug']+'/ao-vivo/'+cam['mediaId']+'/?category=bbb'}
+                )
+    
         print(str(len(cams)) + ' cams were scraped.\n')
 
         return cams
