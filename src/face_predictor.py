@@ -76,12 +76,15 @@ class FacePredictor:
             
             # draw label text
             if visualization_enabled: self.draw_label(frame, face['coordinates'], label, label_prob)
-        
+
         # frame visualization 
         if visualization_enabled:
             cv2.imshow('frame visualization', frame)
             cv2.waitKey(visualization_time)
             close_windows()
+
+        # sort recognized faces by probability
+        recognized_faces = sorted(recognized_faces, key=lambda face: face['probability'], reverse = True) 
 
         return recognized_faces
 
